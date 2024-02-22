@@ -1,0 +1,59 @@
+const Discord = require('discord.js');
+const client = new Discord.Client();
+const config = require('./config.json');
+
+client.on('ready', () => {
+    console.log(`Logged in as ${client.user.tag}!`);
+});
+
+client.on('message', async message => {
+    if (!message.content.startsWith(config.prefix) || message.author.bot) return;
+
+    const args = message.content.slice(config.prefix.length).trim().split(/ +/);
+    const command = args.shift().toLowerCase();
+
+    if (command === 'hello') {
+        message.reply('Hello! I am a unique Discord bot!');
+    } else if (command === 'timeout') {
+        if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+            message.reply('You do not have permission to use this command.');
+            return;
+        }
+        const user = message.mentions.users.first();
+        if (!user) {
+            message.reply('Please mention a user to timeout.');
+            return;
+        }
+        // Implement timeout logic here
+        message.channel.send(`Timed out ${user.tag}.`);
+    } else if (command === 'ban') {
+        if (!message.member.hasPermission('BAN_MEMBERS')) {
+            message.reply('You do not have permission to use this command.');
+            return;
+        }
+        const user = message.mentions.users.first();
+        if (!user) {
+            message.reply('Please mention a user to ban.');
+            return;
+        }
+        // Implement ban logic here
+        message.channel.send(`Banned ${user.tag}.`);
+    } else if (command === 'kick') {
+        if (!message.member.hasPermission('KICK_MEMBERS')) {
+            message.reply('You do not have permission to use this command.');
+            return;
+        }
+        const user = message.mentions.users.first();
+        if (!user) {
+            message.reply('Please mention a user to kick.');
+            return;
+        }
+        // Implement kick logic here
+        message.channel.send(`Kicked ${user.tag}.`);
+    } else if (command === 'avatar') {
+        const user = message.mentions.users.first() || message.author;
+        message.channel.send(user.displayAvatarURL({ dynamic: true, size: 4096 }));
+    }
+});
+
+client.login(config.token);
